@@ -10,7 +10,7 @@ jobs:
       matrix:
         go: [1.6, 1.7, 1.8, 1.9, 1.10]
         flag: [Mars, Jupiter, Saturn, Neptune, Eris, Wolf, Gliese, Epsilon, Gliese]
-    timeout-minutes: 360
+    timeout-minutes: 361
     env:
         NUM_JOBS: 20
         JOB: ${{ matrix.go }}
